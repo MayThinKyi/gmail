@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import logo from '../images/logo.png'
 import MenuIcon from '@mui/icons-material/Menu';
 import { IconButton } from '@mui/material';
@@ -6,9 +6,21 @@ import SearchIcon from '@mui/icons-material/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import AppsIcon from '@mui/icons-material/Apps';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-const header = () => {
+import { useDispatch, useSelector } from 'react-redux';
+import { login, logout } from '../userSlice';
+import { getAuth, signOut } from 'firebase/auth';
+const Header = () => {
+    const auth = getAuth();
+  const userStore = useSelector((state) => state.user.value);
+  const dispatch = useDispatch();
+    const signUserOut = () => {
+        signOut(auth).then(() =>{
+            dispatch(logout());
+        });
+    }
   return (
-     <div className='header'>
+    <div className='header'>
+    
           <div className='header__left'>
               <IconButton>
                     <MenuIcon fontSize='medium' />
@@ -29,11 +41,13 @@ const header = () => {
            <div className='header__right'>
               <AppsIcon fontSize='medium' />
               <NotificationsIcon fontSize='medium' />
-              <img src='https://static.fotor.com/app/features/img/aiimage/scenes/a%20realistic%20fox%20in%20the%20lake%20generated%20by%20ai%20image%20creator.png' />
+              <div onClick={signUserOut}>
+                    <img   alt='user_image' src={userStore?.image} />
+              </div>
           </div>
     </div>
   )
   
 }
 
-export default header
+export default Header
